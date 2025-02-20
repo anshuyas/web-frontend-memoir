@@ -1,0 +1,55 @@
+/* Home Page Styles */
+.home-container {
+    background-image: url("../assets/background.png"); /* Add your background image */
+    background-size: cover;
+    background-position: center;
+    height: 100vh; /* Full viewport height */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative; /* For positioning the top-right buttons */
+    border: none; /* Remove border for home page */
+    margin: 0; /* Remove margin for home page */
+    padding: 0; /* Remove padding for home page */
+    max-width: none; /* Remove max-width for home page */
+  }
+  
+  /* Top-right buttons */
+  .top-right-buttons {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+  }
+  
+  .top-right-buttons .button {
+    margin-left: 10px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .top-right-buttons .button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Centered text */
+  .centered-text {
+    text-align: center;
+    color: white; /* Text color */
+  }
+  
+  .centered-text h1 {
+    font-size: 48px;
+    font-family: "Georgia", serif; /* Fancy font */
+    margin-bottom: 20px;
+  }
+  
+  .centered-text p {
+    font-size: 24px;
+    font-family: "Georgia", serif; /* Fancy font */
+  }
+  
