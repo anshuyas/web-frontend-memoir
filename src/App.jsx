@@ -4,14 +4,17 @@ import Home from "./components/public/home";
 import Login from "./components/public/login";
 import Register from "./components/public/register";
 import Dashboard from "./components/private/dashboard";
-import JournalEntry from "./components/public/journalEntry";
-import Calendar from "./components/public/calendar";
+import JournalEntry from "./components/private/journalEntry";
+import Calendar from "./components/private/calendar";
 import ForgotPassword from "./components/public/forgotPassword";
-import ProtectedRoute from "./routes/protectedRoute";
+import ProtectedRoute from "./components/private/protectedRoute";
 import About from "./components/public/about";
 import TermsAndConditions from "./components/public/terms";
+import SearchPage from "./components/private/searchPage";
+import Settings from "./components/private/settings";
+import AdminDashboard from "./components/private/adminDashboard";
 
-const App = () => {
+function App() {
   return (
     <Router>
       <Routes>
@@ -23,31 +26,39 @@ const App = () => {
         <Route
           path="/dashboard"
           element={
-            
-              <Dashboard />
-            
+              <Dashboard /> 
           }
         />
+
+        <Route path="/admin-dashboard" element={<AdminDashboard/>}/>
+
+        <Route path="/settings" element={<Settings/>}/>
+
+        <Route path="/search"
+         element={<SearchPage />}
+          />
+
+         
         <Route
           path="/journal-entry"
           element={
-            <ProtectedRoute>
               <JournalEntry />
-            </ProtectedRoute>
           }
         />
+
+       <Route path="/journal-entry/:id"
+        element={<JournalEntry />} />
+
         <Route
           path="/calendar"
           element={
-            <ProtectedRoute>
               <Calendar />
-            </ProtectedRoute>
           }
         />
         <Route path="/forgot-password" element={<ForgotPassword />} />
       </Routes>
     </Router>
   );
-};
+}
 
 export default App;

@@ -49,7 +49,7 @@ const ForgotPassword = () => {
           padding: "50px",
           borderRadius: "30px",
           textAlign: "center",
-          width: "350px",
+          width: "450px",
           boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
         }}
       >
@@ -82,6 +82,8 @@ const ForgotPassword = () => {
               border: "1px solid black",
               backgroundColor: "transparent",
             }}
+            onFocus={(e) => (e.target.style.border = "2px solid #5f432c")} // Dark brown border on focus
+            onBlur={(e) => (e.target.style.border = "1px solid black")} // Reverts back when unfocused
           />
           <button
             type="submit"
@@ -105,7 +107,7 @@ const ForgotPassword = () => {
           Remember your password?{" "}
           <a
             href="/login"
-            style={{ color: "black", fontWeight: "bold", textDecoration: "none" }}
+            style={{ color: "black", textDecoration: "none" }}
           >
             Login
           </a>

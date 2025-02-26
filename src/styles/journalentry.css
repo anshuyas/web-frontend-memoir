@@ -1,0 +1,115 @@
+/* Ensure full-page background */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: url("../assets/background.png"); /* Background Image */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* Center the Journal Entry Box */
+.journal-entry-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* Journal Entry Container */
+.journal-entry-container {
+    background-color: rgba(255, 255, 255, 0.9); /* Slight transparency */
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    width: 90%;
+    max-width: 800px;
+    border: 1px solid #e0e0e0;
+    text-align: center;
+}
+
+/* Title Input */
+.title-input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s ease;
+}
+
+.title-input:focus {
+    border-color: brown; 
+    outline: none;
+}
+
+/* Quill Editor Styling */
+.quill-editor {
+    height: 350px;
+    margin-bottom: 45px;
+    border-radius: 8px;
+    border: 1px solid none;
+    background-color: transparent;
+}
+
+.quill-editor .ql-toolbar {
+    border-radius: 8px 8px 0 0;
+    background-color: #ececec;
+}
+
+.quill-editor .ql-container {
+    border-radius: 0 0 8px 8px;
+    background-color: transparent;
+}
+
+/* Hide File Input */
+.file-input {
+    display: none;
+}
+
+/* Button Actions */
+.form-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.submit-button {
+    background-color: #5f432c; 
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.submit-button:hover {
+    background-color: burlywood; /* Darker Turquoise */
+}
+
+/* Delete Button (New Color: Deep Red) */
+.delete-button {
+    background-color: #d9534f; /* Deep Red */
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.delete-button:hover {
+    background-color: #b52b27; /* Darker Red */
+}

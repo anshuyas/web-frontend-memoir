@@ -1,0 +1,118 @@
+/* calendar.css */
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%; /* Ensure html and body take full height */
+  width: 100%;
+  overflow: hidden;
+}
+
+.calendar-container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background-image: url("../assets/background.png"); /* Match your other pages */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding: 20px;
+}
+
+.search-bar {
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* Search Button Styling */
+.search-bar button {
+  background-color: #5f432c; /* Change this to your desired color */
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+}
+
+/* Hover Effect */
+.search-bar button:hover {
+  background-color: burlywood; /* Slightly darker shade for hover */
+}
+
+.fc {
+  width: 80%;
+  max-width: 1000px;
+  height: 80vh;
+  background-color: rgba(255, 255, 255, 0.85); /* Semi-transparent for better readability */
+  border-radius: 10px;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+}
+
+/* Adjust calendar grid to fit better */
+.fc-view-container {
+  height: 100%;
+}
+
+.fc-dayGridMonth-view {
+  height: 100%;
+}
+
+/* Change Calendar Numbers (Dates) Color */
+.fc-daygrid-day-number {
+  color: #5f432c; /* Change this to any color */
+  font-weight: bold;
+  font-size: 14px;
+}
+
+/* Change the color of past & future month dates */
+.fc-day-other .fc-daygrid-day-number {
+  color: #aaa; /* Faded color for previous/next month dates */
+}
+
+.fc-event {
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 5px;
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+}
+
+.fc-event-title {
+  font-weight: bold;
+}
+
+h1 {
+  font-family: "Public Sans", sans-serif; /* Match your other pages */
+  color: #5f432c; /* Match your other pages */
+  font-size: 40px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.ant-modal-content {
+  border-radius: 10px;
+}
+
+.ant-modal-header {
+  background-color: #f0f0f0;
+  border-radius: 10px 10px 0 0;
+}
+
+.ant-modal-body {
+  padding: 20px;
+}
+
+.ant-modal-footer {
+  border-radius: 0 0 10px 10px;
+}

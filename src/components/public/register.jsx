@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import backg from "../../assets/backg.jpg";
+import API from "../../api/axiosInstance";
 import logo from "../../assets/logo.png";
+import "../../styles/register.css"; // Import the regular CSS file
 
 const Register = () => {
   const [firstName, setFirstName] = useState("");
@@ -11,216 +12,153 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  // const [isAdmin, setIsAdmin] = useState(false);
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+
+  const validateEmail = (email) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    return re.test(String(email).toLowerCase());
+  };
 
   const handleRegister = async (e) => {
     e.preventDefault();
 
+    const newErrors = {};
+
+    if (!validateEmail(email)) {
+      newErrors.email = "Enter a valid email";
+    }
+
+    if (password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters";
+    }
+
     if (password !== confirmPassword) {
-      alert("Passwords do not match!");
+      newErrors.confirmPassword = "Passwords do not match";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
 
     try {
-      await axios.post("/api/register", {
+      await API.post("/api/register", {
         firstName,
         lastName,
         username,
         email,
         password,
+        // isAdmin,
       });
 
       alert("Registration successful! Please login.");
       navigate("/login");
     } catch (error) {
+      // Handle registration errors
+    if (error.response && error.response.data) {
+      alert(`Registration failed: ${error.response.data.message}`);
+    } else {
       alert("Registration failed. Please try again.");
+    }
     }
   };
 
   return (
-    <div
-      style={{
-        backgroundImage: `url(${backg})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-        height: "100vh",
-        width: "210vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        overflow: "hidden",
-      }}
-    >
-      <div
-              style={{
-                position: "absolute",
-                top: "20px",
-                left: "20px",
-              }}
-            >
-              <img src={logo} alt="App logo" style={{ width: "100px" }} />
-            </div>
+    <div className="container">
+      <div className="logoContainer">
+        <img src={logo} alt="App logo" className="logo" />
+      </div>
 
-            <div
-         style={{
-          flex: 1,
-          display: "flex",
-          justifyContent: "flex-end",
-          alignItems: "center",
-          paddingRight: "10%",
-        }}
-      >
+      <div className="formContainer">
+        <div className="formWrapper">
+          <h1 className="title">Welcome!</h1>
+          <form onSubmit={handleRegister}>
+            <input
+              type="text"
+              placeholder="First Name"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              required
+              className="input"
+            />
 
-      <div
-        style={{
-          backgroundColor: "#d7c9b1",
-          padding: "30px",
-          borderRadius: "30px",
-          textAlign: "center",
-          width: "400px",
-          boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-        }}
-      >
+            <input
+              type="text"
+              placeholder="Last Name"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              required
+              className="input"
+            />
 
-        <h1
-        style={{
-          fontFamily: "public sans",
-          fontWeight: "bold",
-          fontSize: "50px",
-          color: "#5f432c",
-        }}
-        >Welcome!</h1>
-        <form onSubmit={handleRegister}>
-          <input
-            type="text"
-            placeholder="First Name"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-            required
-            style={{
-              width: "90%",
-              padding: "15px",
-              borderRadius: "12px",
-              border: "1px solid black",
-              backgroundColor: "transparent",}}
-          />
+            <input
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+              className="input"
+            />
 
-          <input
-            type="text"
-            placeholder="Last Name"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-            required
-            style={{
-              width: "90%",
-              padding: "15px",
-              borderRadius: "12px",
-              border: "1px solid black",
-              backgroundColor: "transparent",}}
-          />
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="input"
+            />
+            {errors.email && <p className="error">{errors.email}</p>}
 
-          <input
-            type="text"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-            style={{
-              width: "90%",
-              padding: "15px",
-              borderRadius: "12px",
-              border: "1px solid black",
-              backgroundColor: "transparent",}}
-          />
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="input"
+            />
+            {errors.password && <p className="error">{errors.password}</p>}
 
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            style={{
-              width: "90%",
-              padding: "15px",
-              borderRadius: "12px",
-              border: "1px solid black",
-              backgroundColor: "transparent",}}
-          />
+            <input
+              type="password"
+              placeholder="Confirm Password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+              className="input"
+            />
+            {errors.confirmPassword && (
+              <p className="error">{errors.confirmPassword}</p>
+            )}
 
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            style={{
-              width: "90%",
-              padding: "15px",
-              borderRadius: "12px",
-              border: "1px solid black",
-              backgroundColor: "transparent",}}
-          />
+            {/* <label className="checkboxLabel">
+              <input
+                type="checkbox"
+                checked={isAdmin}
+                onChange={(e) => setIsAdmin(e.target.checked)}
+              />
+              Register as Admin
+            </label> */}
 
-          <input
-            type="password"
-            placeholder="Confirm Password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-            style={{
-              width: "90%",
-              padding: "15px",
-              borderRadius: "12px",
-              border: "1px solid black",
-              backgroundColor: "transparent",}}
-          />
+            <button type="submit" className="button">
+              Register
+            </button>
+          </form>
 
-          <button type="submit" 
-          style={{
-            width: "50%",
-            padding: "12px",
-            backgroundColor: "#5f432c",
-            color: "white",
-            border: "none",
-            borderRadius: "15px",
-            cursor: "pointer",
-            fontSize: "16px",
-            fontWeight: "bold",
-          }}>
-            Register
-          </button>
-        </form>
-
-        <p style={{color: "#5f432c"}}>
-          Already have an account? <a href="/login"style={{color: "black", fontWeight: "bold"}}>
-          Login here</a>.
-        </p>
+          <p className="loginText">
+            Already have an account?{" "}
+            <a href="/login" className="loginLink">
+              Login here
+            </a>
+            .
+          </p>
+        </div>
       </div>
     </div>
-    </div>
   );
-};
-
-// Common styles for inputs and button
-const inputStyle = {
-  width: "100%",
-  padding: "12px",
-  margin: "10px 0",
-  borderRadius: "8px",
-  border: "1px solid #ccc",
-};
-
-const buttonStyle = {
-  width: "100%",
-  padding: "12px",
-  backgroundColor: "#5f432c",
-  color: "white",
-  border: "none",
-  borderRadius: "8px",
-  cursor: "pointer",
-  fontSize: "16px",
-  fontWeight: "bold",
 };
 
 export default Register;

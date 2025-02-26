@@ -1,0 +1,82 @@
+.search-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    background: #d7c9b1;
+    height: 100vh;
+    width: 100vw;
+  }
+  
+  /* Search Bar */
+  .search-bar {
+    display: flex;
+    align-items: center;
+    background: white;
+    border-radius: 12px;
+    padding: 3px;
+    width: 100%;
+    max-width: 500px;
+  }
+  
+  .search-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 10px;
+    font-size: 16px;
+    outline: none;
+  }
+  
+  .search-btn {
+    background: #7b858a;
+    border: none;
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+  .search-btn svg {
+    color: white;
+    font-size: 16px;
+  }
+  
+  /* Filters Section */
+  .filters {
+    margin-top: 20px;
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .filters-title {
+    color: #5f432c;
+    font-size: 16px;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  
+  .filter-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px;
+    background: white;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    cursor: pointer;
+  }
+  
+  .filter-icon {
+    font-size: 18px;
+    margin-right: 10px;
+  }
+  
+  .chevron {
+    transition: transform 0.3s;
+  }
+  
+  .chevron.open {
+    transform: rotate(180deg);
+  }
+  
