@@ -28,7 +28,13 @@ const Login = () => {
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
       alert("Login successful!");
-      navigate("/dashboard");
+
+      // Admin demo credentials check
+      if (email === "admin@example.com" && password === "Admin@123") {
+        navigate("/admin-dashboard");
+      } else {
+        navigate("/dashboard");
+      }
     } catch (error) {
       console.error("Login failed:", error.response?.data || error.message);
       

@@ -13,6 +13,7 @@ import TermsAndConditions from "./components/public/terms";
 import SearchPage from "./components/private/searchPage";
 import Settings from "./components/private/settings";
 import AdminDashboard from "./components/private/adminDashboard";
+import ViewAnalytics from "./components/private/ViewAnalytics";
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
           <Route path="/admin-dashboard" element={<AdminDashboard/>}/>
           <Route path="/journal-entry" element={<JournalEntry/>}/>
           <Route path="/calendar" element={<Calendar />}/>
+          <Route path="/view-analytics" element={<ViewAnalytics/>}/>
         </Route>
           
         <Route path="/journals/:id/edit" element={<JournalEntry/>}/>

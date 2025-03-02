@@ -11,6 +11,7 @@ body {
 .journal-entry-container,
 .calendar-container,
 .forgot-password-container,
+.view-analytics-container,
 .home-container {
   
   max-width: 600px;

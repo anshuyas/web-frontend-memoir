@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import { Modal, Button, Input, Select } from "antd";
+import { Modal, Button, Input, Select, message } from "antd";
+import axios from "axios";
 import "antd/dist/reset.css";
 import "../../styles/calendar.css";
-
 
 const { Option } = Select;
 
@@ -17,38 +17,33 @@ const Calendar = () => {
   const [mood, setMood] = useState("");
   const [searchDate, setSearchDate] = useState("");
 
-  // Mock data for journal entries
-  const mockJournalEntries = [
-    {
-      id: 1,
-      date: "2024-12-25",
-      title: "😊 Happy",
-      content: "Had a great day with friends!",
-    },
-    {
-      id: 2,
-      date: "2025-01-20",
-      title: "😢 Sad",
-      content: "Feeling a bit down today.",
-    },
-    {
-      id: 3,
-      date: "2025-02-22",
-      title: "😴 Tired",
-      content: "Worked late and feeling exhausted.",
-    },
-  ];
-
-  // Simulate fetching journal entries
+  // Fetch journal entries from backend
   useEffect(() => {
-    // console.log("Fetching mock data...");
-    const formattedEvents = mockJournalEntries.map((entry) => ({
-      title: entry.title,
-      date: entry.date,
-      journal: entry.content,
-    }));
-    // console.log("Formatted events:", formattedEvents);
-    setEvents(formattedEvents);
+    const fetchJournalEntries = async () => {
+      try {
+        const response = await axios.get("http://localhost:4000/api/journal", {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        });
+
+        if (response.data.success) {
+          const formattedEvents = response.data.entries.map((entry) => ({
+            id: entry.id,
+            title: entry.mood || "Journal Entry",
+            date: entry.createdAt.split("T")[0],
+            extendedProps: { journal: entry.content },
+          }));
+
+          setEvents(formattedEvents);
+        } else {
+          message.error("Failed to load journal entries.");
+        }
+      } catch (error) {
+        console.error("Error fetching journal entries:", error);
+        message.error("Failed to load journal entries.");
+      }
+    };
+
+    fetchJournalEntries();
   }, []);
 
   // Handle date click
@@ -58,6 +53,7 @@ const Calendar = () => {
 
     setSelectedDate(clickedDate);
     setSelectedEntry(entry);
+    setMood(entry ? entry.title : "");
     setIsModalVisible(true);
   };
 
@@ -66,34 +62,53 @@ const Calendar = () => {
     setMood(value);
   };
 
-  // Simulate saving mood
-  const saveMood = () => {
-    const updatedEvents = events.map((event) =>
-      event.date === selectedDate ? { ...event, title: mood } : event
-    );
-    setEvents(updatedEvents);
+  // Save mood to backend
+  const saveMood = async () => {
+    if (!selectedEntry) {
+      message.warning("No journal entry found for this date.");
+      return;
+    }
 
-    setIsModalVisible(false);
-    alert("Mood saved successfully!");
+    try {
+      await axios.put(
+        `http://localhost:4000/api/journal/${selectedEntry.id}`,
+        { mood },
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      );
+
+      setEvents((prevEvents) =>
+        prevEvents.map((event) =>
+          event.id === selectedEntry.id ? { ...event, title: mood } : event
+        )
+      );
+
+      setIsModalVisible(false);
+      message.success("Mood updated successfully!");
+    } catch (error) {
+      console.error("Error updating mood:", error);
+      message.error("Failed to update mood.");
+    }
   };
 
   // Handle search by date
   const handleSearch = () => {
-    const entry = mockJournalEntries.find((entry) => entry.date === searchDate);
+    const entry = events.find((event) => event.date === searchDate);
 
     if (entry) {
       setSelectedDate(entry.date);
       setSelectedEntry(entry);
+      setMood(entry.title);
       setIsModalVisible(true);
     } else {
-      alert("No journal entry found for this date.");
+      message.info("No journal entry found for this date.");
     }
   };
 
   return (
     <div className="calendar-container">
-       <h1>Calendar</h1>
-
+      <h1>Calendar</h1>
 
       {/* Search Bar */}
       <div className="search-bar">
@@ -102,7 +117,7 @@ const Calendar = () => {
           value={searchDate}
           onChange={(e) => setSearchDate(e.target.value)}
           placeholder="Search by date"
-          style={{ width: "200px" }}
+          style={{ width: "200px", marginRight: "10px" }}
         />
         <Button type="primary" onClick={handleSearch}>
           Search
@@ -135,10 +150,11 @@ const Calendar = () => {
       >
         {selectedEntry ? (
           <div>
-             <p>{selectedEntry.journal}</p>
+            <p>{selectedEntry.extendedProps.journal}</p>
             <Select
               placeholder="Select your mood"
               style={{ width: "100%", marginBottom: "10px" }}
+              value={mood}
               onChange={handleMoodChange}
             >
               <Option value="😊 Happy">😊 Happy</Option>
@@ -148,7 +164,8 @@ const Calendar = () => {
               <Option value="😎 Cool">😎 Cool</Option>
             </Select>
             <Button type="primary" onClick={saveMood}>
-                Save Mood</Button>
+              Save Mood
+            </Button>
           </div>
         ) : (
           <p>No journal entry for this date.</p>
@@ -158,4 +175,4 @@ const Calendar = () => {
   );
 };
 
-export default Calendar; 
+export default Calendar;

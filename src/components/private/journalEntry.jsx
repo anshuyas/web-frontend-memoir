@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css"; // Quill styles
-import axios from "axios"; // For API calls
+import "react-quill/dist/quill.snow.css";
+import axios from "axios";
 import "../../styles/journalentry.css";
 
-// Set the base URL for Axios
 axios.defaults.baseURL = "http://localhost:4000";
 
 const JournalEntry = () => {
@@ -14,41 +13,42 @@ const JournalEntry = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const { id } = useParams(); // For edit mode
-  const quillRef = useRef();
-  const isEditing = !!id;
+  const { id } = useParams();
+  const isEditing = !!id; // Check if editing mode
 
   useEffect(() => {
-    if (!id) return; // Prevent fetching with invalid ID
-  
+    if (!isEditing) return;
+
     const fetchJournalEntry = async () => {
+      setLoading(true);
       try {
-        setLoading(true);
         const token = localStorage.getItem("token");
         if (!token) {
           setError("Access denied. Please log in.");
           navigate("/login");
           return;
         }
-  
+
         const response = await axios.get(`/api/journals/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-  
-        setTitle(response.data.title || "");
-        setContent(response.data.content || "");
-        setError(""); // Clear any previous errors
+
+        if (response.data) {
+          setTitle(response.data.title || ""); 
+          setContent(response.data.content || ""); 
+        } else {
+          setError("Journal entry not found.");
+        }
       } catch (err) {
-        setError(err.response?.data?.message || "Failed to fetch journal entry.");
-        console.error("Fetch error:", err.response?.data || err.message);
+        setError("Failed to fetch journal entry.");
+        console.error(err);
       } finally {
         setLoading(false);
       }
     };
-  
+
     fetchJournalEntry();
-  }, [id]); // Only re-run if `id` changes
-  
+  }, [id, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -61,51 +61,23 @@ const JournalEntry = () => {
 
     try {
       setLoading(true);
-      const data = { title, content: content.trim() };
-
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      };
+      const data = { title, content };
 
       if (isEditing) {
-        await axios.put(`/api/journals/${id}`, data, config);
+        await axios.put(`/api/journals/${id}`, data, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         alert("Entry updated successfully!");
       } else {
-        await axios.post("/api/journals", data, config);
+        await axios.post("/api/journals", data, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         alert("Entry created successfully!");
       }
 
       navigate("/dashboard");
     } catch (err) {
       setError("Failed to save journal entry.");
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!window.confirm("Are you sure you want to delete this entry?")) return;
-
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setError("Access denied. Please log in.");
-      navigate("/login");
-      return;
-    }
-
-    try {
-      setLoading(true);
-      await axios.delete(`/api/journals/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      alert("Entry deleted successfully!");
-      navigate("/dashboard");
-    } catch (err) {
-      setError("Failed to delete journal entry.");
       console.error(err);
     } finally {
       setLoading(false);
@@ -128,48 +100,14 @@ const JournalEntry = () => {
             className="title-input"
           />
           <ReactQuill
-            ref={quillRef}
             value={content}
             onChange={setContent}
             placeholder="Write your journal..."
-            modules={{
-              toolbar: [
-                [{ header: [1, 2, false] }],
-                ["bold", "italic", "underline", "strike"],
-                [{ list: "ordered" }, { list: "bullet" }],
-                [{ color: [] }],
-                [{ align: [] }],
-                ["image"],
-              ],
-            }}
-            formats={[
-              "header",
-              "bold",
-              "italic",
-              "underline",
-              "strike",
-              "list",
-              "bullet",
-              "color",
-              "align",
-              "image",
-            ]}
             className="quill-editor"
           />
-          <div className="form-actions">
-            <button type="submit" className="submit-button" disabled={loading}>
-              {isEditing ? "Update Entry" : "Save Entry"}
-            </button>
-            {isEditing && (
-              <button
-                type="button"
-                onClick={handleDelete}
-                className="delete-button"
-              >
-                Delete Entry
-              </button>
-            )}
-          </div>
+          <button type="submit" className="submit-button" disabled={loading}>
+            {isEditing ? "Update Entry" : "Save Entry"}
+          </button>
         </form>
       </div>
     </div>
