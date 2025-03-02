@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Home from "./components/public/home";
 import Login from "./components/public/login";
 import Register from "./components/public/register";
@@ -23,39 +23,29 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/about" element={<About/>}/>
         <Route path="/terms" element={<TermsAndConditions/>}/>
-        <Route
-          path="/dashboard"
-          element={
-              <Dashboard /> 
-          }
-        />
 
-        <Route path="/admin-dashboard" element={<AdminDashboard/>}/>
-
-        <Route path="/settings" element={<Settings/>}/>
+        {/* Protected route  */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/dashboard" element={<Dashboard />}/>
+          <Route path="/admin-dashboard" element={<AdminDashboard/>}/>
+          <Route path="/journal-entry" element={<JournalEntry/>}/>
+          <Route path="/calendar" element={<Calendar />}/>
+        </Route>
+          
+        <Route path="/journals/:id/edit" element={<JournalEntry/>}/>
 
         <Route path="/search"
          element={<SearchPage />}
           />
 
-         
-        <Route
-          path="/journal-entry"
-          element={
-              <JournalEntry />
-          }
-        />
-
        <Route path="/journal-entry/:id"
         element={<JournalEntry />} />
 
-        <Route
-          path="/calendar"
-          element={
-              <Calendar />
-          }
-        />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+
+        {/* Default route */}
+        <Route path="*" element={<Navigate to="/login" />} />
+    
       </Routes>
     </Router>
   );

@@ -98,11 +98,11 @@ html, body {
     background-color: burlywood; /* Darker Turquoise */
 }
 
-/* Delete Button (New Color: Deep Red) */
+/* Delete Button */
 .delete-button {
-    background-color: #d9534f; /* Deep Red */
+    background-color: #d9534f; 
     color: white;
-    padding: 12px 25px;
+    padding: 12px 12px;
     border: none;
     border-radius: 8px;
     font-size: 16px;
@@ -112,4 +112,27 @@ html, body {
 
 .delete-button:hover {
     background-color: #b52b27; /* Darker Red */
+}
+
+/* Edit Button */
+.edit-button {
+    background-color: #5bc0de; /* Sky Blue */
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.edit-button:hover {
+    background-color: #31b0d5; /* Darker Blue */
+}
+
+/* Align Edit & Delete Buttons */
+.entry-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
 }

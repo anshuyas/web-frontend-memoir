@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { FaEye, FaEyeSlash } from "react-icons/fa"; 
 import axios from "axios";
-import API from "../../api/axiosInstance";
 import logo from "../../assets/logo.png";
 import "../../styles/register.css"; // Import the regular CSS file
 
@@ -12,7 +12,8 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  // const [isAdmin, setIsAdmin] = useState(false);
+  const [showPassword, setShowPassword] = useState(false); 
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
@@ -44,7 +45,7 @@ const Register = () => {
     }
 
     try {
-      await API.post("/api/register", {
+      const response = await axios.post("http://localhost:4000/api/register", {
         firstName,
         lastName,
         username,
@@ -53,16 +54,29 @@ const Register = () => {
         // isAdmin,
       });
 
+      console.log("Registration response:", response.data); // Debugging
+
       alert("Registration successful! Please login.");
       navigate("/login");
     } catch (error) {
+      console.error("Registration error:", error.response.data); // Debugging
       // Handle registration errors
-    if (error.response && error.response.data) {
+      if (error.response && error.response.data) {
       alert(`Registration failed: ${error.response.data.message}`);
     } else {
       alert("Registration failed. Please try again.");
     }
     }
+  };
+
+  // Toggle password visibility
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  // Toggle confirm password visibility
+  const toggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword(!showConfirmPassword);
   };
 
   return (
@@ -112,36 +126,47 @@ const Register = () => {
             />
             {errors.email && <p className="error">{errors.email}</p>}
 
+            <div className="password-input-container">
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
               className="input"
             />
+            {/* Toggle password visibility button */}
+            <button
+                type="button"
+                className="password-toggle-button"
+                onClick={togglePasswordVisibility}
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
             {errors.password && <p className="error">{errors.password}</p>}
 
+            <div className="password-input-container">
             <input
-              type="password"
+              type={showConfirmPassword ? "text" : "password"}
               placeholder="Confirm Password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
               className="input"
             />
+            {/* Toggle confirm password visibility button */}
+            <button
+                type="button"
+                className="password-toggle-button"
+                onClick={toggleConfirmPasswordVisibility}
+              >
+                {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
             {errors.confirmPassword && (
               <p className="error">{errors.confirmPassword}</p>
             )}
-
-            {/* <label className="checkboxLabel">
-              <input
-                type="checkbox"
-                checked={isAdmin}
-                onChange={(e) => setIsAdmin(e.target.checked)}
-              />
-              Register as Admin
-            </label> */}
 
             <button type="submit" className="button">
               Register

@@ -1,23 +1,32 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import API from "../../api/axiosInstance";
 import axios from "axios";
+import { FaEye, FaEyeSlash } from "react-icons/fa"; // Import eye icons
 import "../../styles/login.css"; // Import the CSS file
 import logo from "../../assets/logo.png";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setError(""); // Clear previous errors
 
     try {
       const response = await axios.post("http://localhost:4000/api/login", { email, password });
-      const { token } = response.data;
-      localStorage.setItem("token", token); // Save token for authentication
+      const { token, user } = response.data;
+
+      // Store token and user details in localStorage
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+
+      // Set token in axios headers
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
       alert("Login successful!");
       navigate("/dashboard");
     } catch (error) {
@@ -25,11 +34,16 @@ const Login = () => {
       
        // Show backend error message if available
     if (error.response?.data?.message) {
-      alert(`Login failed: ${error.response.data.message}`);
+      setError(error.response.data.message);
     } else {
-      alert("Login failed. Please try again.");
+      setError("Login failed. Please try again.");
     }
     }
+  };
+
+  // Toggle password visibility
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   return (
@@ -51,14 +65,28 @@ const Login = () => {
               className="input-field"
             />
 
+          <div className="password-input-container">
             <input
-              type="password"
+              type={showPassword ? "text" : "password"} // Toggle input type
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
               className="input-field"
             />
+
+            {/* Toggle password visibility button */}
+            <button
+                type="button"
+                className="password-toggle-button"
+                onClick={togglePasswordVisibility}
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
+
+            {/* Show error message */}
+            {error && <p className="error-message">{error}</p>}
 
             {/* Forgot Password link */}
             <div className="password-link">

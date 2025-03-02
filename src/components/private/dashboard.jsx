@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   FaPlus,
   FaChartBar,
@@ -10,6 +10,7 @@ import {
   FaUserEdit,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import "../../styles/dashboard.css";
 
 const Dashboard = () => {
@@ -17,7 +18,51 @@ const Dashboard = () => {
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [theme, setTheme] = useState("light");
   const [activeTab, setActiveTab] = useState("theme"); // "theme" or "profile"
+  const [user, setUser] = useState(null); // State to store user details
+  const [journalEntries, setJournalEntries] = useState([]); 
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
+
+  // Fetch user details from localStorage on component mount
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    if (storedUser) {
+      setUser(storedUser);
+    }
+  }, []);
+
+   // Fetch journal entries from the backend
+   useEffect(() => {
+    const fetchJournalEntries = async () => {
+      try {
+        const response = await axios.get("/api/journals/recent", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`, // Include the token for authentication
+          },
+        });
+
+        console.log("API Response:", response.data); // Debugging
+
+        // If the response is an object with a nested array
+      if (response.data && Array.isArray(response.data.journals)) {
+        setJournalEntries(response.data.journals);
+      } else if (Array.isArray(response.data)) {
+        setJournalEntries(response.data);
+      } else {
+        throw new Error("Invalid journal entries format");
+      }
+
+      } catch (err) {
+        setError("Failed to fetch journal entries");
+        console.error(err);
+      } finally {
+        setLoading(false); // Stop loading
+      }
+    };
+
+    fetchJournalEntries();
+  }, []);
 
   const toggleProfileDropdown = () => {
     setProfileDropdown(!profileDropdown);
@@ -25,6 +70,7 @@ const Dashboard = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("token"); // Clear the token
+    localStorage.removeItem("user"); // Clear the user details
     navigate("/login"); // Redirect to login page
   };
 
@@ -78,9 +124,14 @@ const Dashboard = () => {
             <FaChevronDown className="dropdown-icon" />
             {profileDropdown && (
               <div className="dropdown-menu">
-                <p className="username">Anshuyas</p>
-                <p className="email">asy@example.com</p>
+                {/* Display user's username and email */}
+                {user && (
+                  <>
+                <p className="username">{user.username}</p>
+                <p className="email">{user.email}</p>
                 <hr />
+                </>
+                )}
                 <button className="dropdown-item" onClick={handleSettingsClick}>
                   Settings
                 </button>
@@ -95,7 +146,41 @@ const Dashboard = () => {
         {/* Journal Section */}
         <section className="journal-section">
           <h2>Recent Journals</h2>
+          {loading ? (
+            <p>Loading...</p>
+          ) : error ? (
+            <p className="error-message">{error}</p>
+          ) :Array.isArray(journalEntries) && journalEntries.length > 0 ? (
+            <div className="journal-entries">
+              {journalEntries.map((entry) => (
+                <div key={entry.id} className="journal-entry">
+                  <h3>{entry.title}</h3>
+                  <p>{entry.content}</p>
+                  <small>{new Date(entry.createdAt).toLocaleDateString()}</small>
+
+                  {/* Edit Button */}
+                  <button onClick={() => navigate(`/journal-entry/${entry.id}`)}>Edit</button>
+
+                  {/* Delete Button */}
+                <button onClick={async () => {
+                  if (!window.confirm("Are you sure you want to delete this entry?")) return;
+                  try {
+                    await axios.delete(`/api/journals/${entry.id}`, {
+                      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+                    });
+                    setJournalEntries(journalEntries.filter(j => j.id !== entry.id)); // Update state
+                  } catch (error) {
+                    console.error("Failed to delete entry:", error);
+                  }
+                }}>
+                  Delete
+                </button>
+                </div>
+              ))}
+            </div>
+          ) : (
           <p>No recent journal entries found.</p>
+          )}
         </section>
       </main>
 
